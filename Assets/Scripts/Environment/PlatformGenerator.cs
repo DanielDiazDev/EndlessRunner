@@ -6,14 +6,24 @@ using UnityEngine;
 public class PlatformGenerator : MonoBehaviour
 {
     [SerializeField] private Transform _platformStart;
-    [SerializeField] private List<Transform> _levelsEasy;
     [SerializeField] private Player _player;
     [SerializeField] private float PLAYER_DISTANCE_SPAWN_LEVEL = 30f;
-    private Transform _endPosition;
+    [SerializeField] private Transform _levelTest;
+    [SerializeField] private Transform _endPosition;
+    [SerializeField] private PlatformConfiguration _platformConfiguration;
+    private PlatformFactory _platformFactory;
+    private int _levelPartsSpawned;
+
     // Start is called before the first frame update
+    private enum Difficulty
+    {
+        Easy,
+        Medium,
+        Hard
+    }
     void Awake()
     {
-        _endPosition = _platformStart.Find("EndPosition");
+        _platformFactory = new PlatformFactory(_platformConfiguration, _levelTest);
         var startingSpawnPlatformStart = 3;
         for (int i = 0; i < startingSpawnPlatformStart; i++)
         {
@@ -31,16 +41,22 @@ public class PlatformGenerator : MonoBehaviour
     }
     private void SpawnLevelPart()
     {
-        var chosenLevelPart = _levelsEasy[UnityEngine.Random.Range(0, _levelsEasy.Count)];
-        //Hacer testeos hardcord
-        var level = Instantiate(chosenLevelPart, _endPosition.position, Quaternion.identity); //Agregar padre
+        var level = _platformFactory.Create(GetDifficulty(), _endPosition.position);
+        //Agregar padre
         _endPosition = level.Find("EndPosition");
+        _levelPartsSpawned++;
     }
 
-    
     private float GetDistance()
     {
         var distanceSquared = (_player.transform.position - _endPosition.position).sqrMagnitude;
         return MathF.Sqrt(distanceSquared);
+    }
+    private int GetDifficulty()
+    {
+        if (_levelPartsSpawned >= 14) return (int)Difficulty.Hard;
+        if (_levelPartsSpawned >= 7) return (int)Difficulty.Medium;
+        return (int)Difficulty.Easy;
+
     }
 }

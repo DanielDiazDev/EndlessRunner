@@ -7,10 +7,10 @@ public class PlayerJump : MonoBehaviour
     [SerializeField] private Vector2 _boxSize;
     [SerializeField] private LayerMask _layerGround;
     [SerializeField] private float _castDistance;
-    [SerializeField] private float _jumpForce;
+    [SerializeField] private float _jumpForce; //25
     [SerializeField] private Transform _checkGround;
-    public float gravityScale = 10;
-    public float fallingGravityScale = 40;
+    public float gravityScale = 10; //10
+    public float fallingGravityScale = 40; //10
     private Rigidbody2D _rigidbody;
     private void Start()
     {
